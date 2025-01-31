@@ -2,7 +2,7 @@ const { WebcastPushConnection } = require('tiktok-live-connector');
 const axios = require('axios');
 
 // CONFIG
-const TIKTOK_USERNAME = 'yogakokxd'; // Ganti dengan username TikTok
+const TIKTOK_USERNAME = 'makimachankawai'; // Ganti dengan username TikTok
 const SERVER_URL = 'http://localhost:3000/webhook';
 
 // Init client
