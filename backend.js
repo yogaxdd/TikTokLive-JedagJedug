@@ -74,3 +74,32 @@ app.get('/', (req, res) => {
 app.get('/:username', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/overlay.html'));
 });
+
+// Di backend.js
+function broadcastQueue() {
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({
+        type: 'queue_update',
+        queue: queue
+      }));
+    }
+  });
+}
+
+// Panggil fungsi ini setiap kali queue diupdate
+app.post('/webhook', express.json(), (req, res) => {
+  const { giftId, count } = req.body;
+  
+  if(giftMap[giftId]) {
+    queue.push({
+      ...giftMap[giftId],
+      repeatCount: count
+    });
+    
+    if(!isPlaying) playNext();
+    broadcastQueue(); // Kirim update antrian
+  }
+  
+  res.status(200).send('OK');
+});

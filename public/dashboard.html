@@ -2,8 +2,10 @@
 <html>
 <head>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .gift-btn { margin: 5px; padding: 10px 20px; cursor: pointer; }
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f0f0; }
+    .gift-btn { margin: 5px; padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+    .gift-btn:hover { background-color: #0056b3; }
+    #queue-list { margin-top: 20px; padding: 10px; background-color: white; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
   </style>
 </head>
 <body>
@@ -14,8 +16,13 @@
   <button class="gift-btn" data-id="7974">🌪️ Anemo Slime</button>
   <!-- Tambahkan tombol gift lain -->
 
+  <div id="queue-list">
+    <h3>Antrian Video:</h3>
+    <ul id="queue-items"></ul>
+  </div>
+
   <script>
-    const ws = new WebSocket(`ws://${window.location.host}`);
+    const ws = new WebSocket(`wss://${window.location.host}`);
 
     document.querySelectorAll('.gift-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -24,6 +31,22 @@
         ws.send(JSON.stringify({ giftId, count }));
       });
     });
+
+    // Update antrian video
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'queue_update') {
+        const queueItems = document.getElementById('queue-items');
+        queueItems.innerHTML = data.queue.map((item, index) => 
+          `<li>${index + 1}. ${item.file} (${item.duration}ms)</li>`
+        ).join('');
+      }
+    };
+
+    // Handle WebSocket error
+    ws.onerror = (error) => {
+      console.error('WebSocket Error:', error);
+    };
   </script>
 </body>
 </html>
