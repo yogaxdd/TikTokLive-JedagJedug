@@ -1,15 +1,12 @@
 {
-    "name": "tiktok-live-overlay",
-    "version": "1.0.0",
-    "description": "TikTok Live Gift Overlay",
-    "main": "backend.js",
-    "scripts": {
-      "start": "node backend.js"
-    },
-    "dependencies": {
-      "express": "^4.18.2",
-      "ws": "^8.16.0",
-      "tiktok-live-connector": "^0.9.20",
-      "axios": "^1.6.2"
-    }
+  "name": "tiktok-overlay",
+  "version": "1.0.0",
+  "main": "backend.js",
+  "scripts": {
+    "start": "node backend.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.13.0"
   }
+}

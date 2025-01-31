@@ -3,7 +3,7 @@ const WebSocket = require('ws');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Config
 const giftMap = {
@@ -14,7 +14,7 @@ const giftMap = {
 };
 
 const server = app.listen(port, () => {
-  console.log(`Server running: http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
 
 const wss = new WebSocket.Server({ server });
@@ -26,10 +26,9 @@ app.post('/webhook', express.json(), (req, res) => {
   const { giftId, count } = req.body;
   
   if(giftMap[giftId]) {
-    // Tambahkan 1 entry ke queue dengan jumlah repeatCount
     queue.push({
       ...giftMap[giftId],
-      repeatCount: count // Jumlah pengulangan video
+      repeatCount: count
     });
     
     if(!isPlaying) playNext();
@@ -44,7 +43,6 @@ function playNext() {
   isPlaying = true;
   const current = queue.shift();
   
-  // Loop sesuai repeatCount
   for(let i = 0; i < current.repeatCount; i++) {
     wss.clients.forEach(client => {
       if(client.readyState === WebSocket.OPEN) {
@@ -52,17 +50,16 @@ function playNext() {
           type: 'play',
           video: current.file,
           duration: current.duration,
-          instanceId: Date.now() + i // ID unik tiap instance
+          instanceId: Date.now() + i
         }));
       }
     });
   }
 
-  // Atur timeout untuk video berikutnya
   setTimeout(() => {
     isPlaying = false;
     playNext();
-  }, (current.duration * current.repeatCount) + 500); // Durasi total + fade
+  }, (current.duration * current.repeatCount) + 500);
 }
 
 // Serve static files
