@@ -65,6 +65,12 @@ function playNext() {
 // Serve static files
 app.use(express.static('public'));
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('TikTok Live Overlay is running!');
+});
+
+// Overlay route
 app.get('/:username', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/overlay.html'));
 });
