@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .gift-btn { margin: 5px; padding: 10px 20px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Simulator Gift</h1>
+
+  <button class="gift-btn" data-id="5655">🎁 Rose</button>
+  <button class="gift-btn" data-id="5333">☕ Coffee</button>
+  <button class="gift-btn" data-id="7974">🌪️ Anemo Slime</button>
+  <!-- Tambahkan tombol gift lain -->
+
+  <script>
+    const ws = new WebSocket(`ws://${window.location.host}`);
+
+    document.querySelectorAll('.gift-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const giftId = btn.dataset.id;
+        const count = parseInt(prompt('Jumlah gift:', '1')) || 1;
+        ws.send(JSON.stringify({ giftId, count }));
+      });
+    });
+  </script>
+</body>
+</html>

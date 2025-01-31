@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { margin: 0; background: transparent !important; }
+    #video-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+    #video-container.active { opacity: 1; }
+    video { max-width: 100vw; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="video-container">
+    <video id="player" playsinline autoplay muted></video>
+  </div>
+
+  <script>
+    const ws = new WebSocket(`ws://${window.location.host}`);
+    const player = document.getElementById('player');
+    const container = document.getElementById('video-container');
+    let currentInstance = null;
+
+    ws.onmessage = (e) => {
+      const { video, duration, instanceId } = JSON.parse(e.data);
+      
+      // Hanya proses jika instance baru
+      if(currentInstance !== instanceId) {
+        currentInstance = instanceId;
+        
+        player.src = `videos/${video}`;
+        container.classList.add('active');
+        
+        setTimeout(() => {
+          container.classList.remove('active');
+        }, duration - 500);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket Error:', error);
+    };
+  </script>
+</body>
+</html>
